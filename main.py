@@ -1,44 +1,30 @@
-class Cart():
+class AppStore ():
     def __init__(self):
-        self.goods = []
+        self.apps = {}
 
-    def add(self, gd):
-        self.goods.append(gd)
+    def add_application(self, app):
+        self.apps[id(app)] = app
 
-    def remove(self, indx):
-        del self.goods[indx]
+    def remove_application(self, app):
+        self.apps.pop(id(app))
 
-    def get_list(self):
-        return [f'{el.name}: {el.price}' for el in self.goods]
+    def block_application(self, app):
+        obj = self.apps.get(id(app), False)
+        if not obj:
+            return False
+        obj.blocked = True
+        return True
 
-class Table():
-    def __init__(self, name, price):
+
+    def total_apps(self):
+        return len(self.apps)
+
+class Application():
+    def __init__(self, name, blocked=False):
         self.name = name
-        self.price = price
+        self.blocked = blocked
 
-
-class TV():
-    def __init__(self, name, price):
-        self.name = name
-        self.price = price
-
-
-class Notebook():
-    def __init__(self, name, price):
-        self.name = name
-        self.price = price
-
-
-class Cup():
-    def __init__(self, name, price):
-        self.name = name
-        self.price = price
-
-
-cart = Cart()
-cart.add(TV('Samsung', 1700))
-cart.add(TV('Philips', 1500))
-cart.add(Table('AMI', 300))
-cart.add(Notebook('Lenovo', 1700))
-cart.add(Cup('AMI', 10))
-
+store = AppStore()
+app_youtube = Application("Youtube")
+store.add_application(app_youtube)
+store.remove_application(app_youtube)
