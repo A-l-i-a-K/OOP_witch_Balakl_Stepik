@@ -1,48 +1,49 @@
-class Viber():
+class Router:
 
-    mess = {}
+    def __init__(self):
+        self.buffer = []
+        self.servers = {}
 
-    @classmethod
-    def add_message(cls, msg):
-        cls.mess[id(msg)] = msg
+    def link(self, server):
+        self.servers[server.ip] = server
+        server.router = self
 
-    @classmethod
-    def remove_message(cls, msg):
-        if id(msg) in cls.mess:
-            cls.mess.pop(id(msg))
+    def unlink(self, server):
+        s = self.servers.pop(server.ip, False)
+        if s:
+            s.router = None
 
-    @classmethod
-    def set_like(cls, msg):
-        if id(msg) in cls.mess:
-            msg.fl_like = not msg.fl_like
+    def send_data(self):
+        for d in self.buffer:
+            if d.ip in self.servers:
+                self.servers[d.ip].buffer.append(d)
+        self.buffer.clear()
 
+class Server:
 
-    @classmethod
-    def show_last_message(cls, num):
-        for m in tuple(cls.mess.values())[-num:]:
-            print(m)
+    server_ip = 1
 
-    @classmethod
-    def total_messages(cls):
-        return len(cls.mess)
+    def __init__(self):
+        self.buffer = []
+        self.ip = Server.server_ip
+        Server.server_ip += 1
+        self.router = None
 
-class Message():
-    def __init__(self, text, fl_like=False):
-        self.text = text
-        self.fl_like = fl_like
-
-msg = Message("Всем привет!")
-Viber.add_message(msg)
-Viber.add_message(Message("Это курс по Python ООП."))
-Viber.add_message(Message("Что вы о нем думаете?"))
-Viber.add_message(Message("1Что вы о нем думаете?"))
-Viber.add_message(Message("2Что вы о нем думаете?"))
-Viber.add_message(Message("3Что вы о нем думаете?"))
-Viber.set_like(msg)
-Viber.remove_message(msg)
+    def send_data(self, data):
+        if self.router:
+            self.router.buffer.append(data)
 
 
-print(Viber.show_last_message(1))
-print(Viber.total_messages())
+    def get_data(self):
+        b = self.buffer[:].copy()
+        self.buffer.clear()
+        return b
+
+    def get_ip(self):
+        return self.ip
 
 
+class Data:
+    def __init__(self, msg, ip):
+        self.data = msg
+        self.ip = ip
