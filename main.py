@@ -1,23 +1,18 @@
-class Book:
-    def __init__(self, author, title, price):
-        self.__author = author
-        self.__title = title
-        self.__price = price
+import sys
 
-    def set_title(self, title):
-        self.__title = title
+class ListObject():
+    def __init__(self, data, next_obj = None):
+        self.data = data
+        self.next_obj = next_obj
 
-    def set_author(self, author):
-        self.__author = author
+    def link(self, obj):
+        self.next_obj = obj
 
-    def set_price(self, price):
-        self.__price = price
+lst_in = list(map(str.strip, sys.stdin.readlines()))
 
-    def get_title(self):
-        return self.__title
-
-    def get_author(self):
-        return self.__author
-
-    def get_price(self):
-        return self.__price
+head_obj = ListObject(lst_in[0])
+obj = head_obj
+for i in range(1, len(lst_in)):
+    obj_new = ListObject(lst_in[i])
+    obj.link(obj_new)
+    obj = obj_new
