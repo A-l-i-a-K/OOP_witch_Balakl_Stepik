@@ -1,49 +1,19 @@
-class Router:
+class Line:
 
-    def __init__(self):
-        self.buffer = []
-        self.servers = {}
+    def __init__(self, x1, y1, x2, y2):
+        self.__x1 = x1
+        self.__y1 = y1
+        self.__x2 = x2
+        self.__y2 = y2
 
-    def link(self, server):
-        self.servers[server.ip] = server
-        server.router = self
+    def set_coords(self, x1, y1, x2, y2):
+        self.__x1 = x1
+        self.__y1 = y1
+        self.__x2 = x2
+        self.__y2 = y2
 
-    def unlink(self, server):
-        s = self.servers.pop(server.ip, False)
-        if s:
-            s.router = None
+    def get_coords(self):
+        return (self.__x1, self.__y1, self.__x2, self.__y2)
 
-    def send_data(self):
-        for d in self.buffer:
-            if d.ip in self.servers:
-                self.servers[d.ip].buffer.append(d)
-        self.buffer.clear()
-
-class Server:
-
-    server_ip = 1
-
-    def __init__(self):
-        self.buffer = []
-        self.ip = Server.server_ip
-        Server.server_ip += 1
-        self.router = None
-
-    def send_data(self, data):
-        if self.router:
-            self.router.buffer.append(data)
-
-
-    def get_data(self):
-        b = self.buffer[:].copy()
-        self.buffer.clear()
-        return b
-
-    def get_ip(self):
-        return self.ip
-
-
-class Data:
-    def __init__(self, msg, ip):
-        self.data = msg
-        self.ip = ip
+    def draw(self):
+        print(self.__x1, self.__y1, self.__x2, self.__y2)
