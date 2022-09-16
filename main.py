@@ -1,30 +1,69 @@
-class Point:
-    def __init__(self, x, y):
-        self.__x = x
-        self.__y = y
+class LinkedList:
 
-    def get_coords(self):
-        return self.__x, self.__y
+    def __init__(self):
+        self.head = None
+        self.tail = None
 
-class Rectangle:
-    def __init__(self, a, b, c=None, d=None):
-        self.__sp = self.__ep = None
-        if isinstance(a, Point) and isinstance(b, Point):
-            self.__sp = a
-            self.__ep = b
-        elif all(map(lambda x: type(x) in (int, float), (a,b,c,d))):
-            self.__sp = Point(a, b)
-            self.__ep = Point(c, d)
+    def add_obj(self, obj):
+        if self.tail:
+            self.tail.set_next(obj)
+        obj.set_prev(self.tail)
+        self.tail = obj
+        if not self.head:
+            self.head = obj
 
-    def set_coords(self, sp, ep):
-        self.__sp = sp
-        self.__ep = ep
+    def remove_obj(self):
+        if not self.tail:
+            return
+        prev = self.tail.get_prev()
+        if prev:
+            prev.set_next(None)
+        self.tail = prev
+        if not self.tail:
+            self.head = None
 
-    def get_coords(self):
-        return self.__sp, self.__ep
+    def get_data(self):
+        s = []
+        h = self.head
+        while h:
+            s.append(h.get_data())
+            h = h.get_next()
+        return s
 
-    def draw(self):
-        print(f'Прямоугольник с координатами: {self.__sp.get_coords()}, {self.__ep.get_coords()}')
+class ObjList:
+
+    def __init__(self, data):
+        self.__data = data
+        self.__next = None
+        self.__prev = None
+
+    def set_next(self, obj):
+        self.__next = obj
+
+    def set_prev(self, obj):
+        self.__prev = obj
+
+    def get_next(self):
+        return self.__next
+
+    def get_prev(self):
+        return self.__prev
+
+    def set_data(self, data):
+        self.__data = data
+
+    def get_data(self):
+        return self.__data
+
+lst = LinkedList()
+lst.add_obj(ObjList("данные 1"))
+lst.add_obj(ObjList("данные 2"))
+lst.add_obj(ObjList("данные 3"))
+res = lst.get_data()
+print(res)
 
 
-rect = Rectangle(0, 0, 20, 34)
+
+
+
+
