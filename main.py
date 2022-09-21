@@ -1,69 +1,63 @@
-class LinkedList:
+class TreeObj:
+    def __init__(self, indx, value=None):
+        self.indx = indx
+        self.value = value
+        self.left = self.right = None
 
-    def __init__(self):
-        self.head = None
-        self.tail = None
+    @property
+    def left(self):
+        return self.__left
 
-    def add_obj(self, obj):
-        if self.tail:
-            self.tail.set_next(obj)
-        obj.set_prev(self.tail)
-        self.tail = obj
-        if not self.head:
-            self.head = obj
+    @left.setter
+    def left(self, obj):
+        self.__left = obj
 
-    def remove_obj(self):
-        if not self.tail:
-            return
-        prev = self.tail.get_prev()
-        if prev:
-            prev.set_next(None)
-        self.tail = prev
-        if not self.tail:
-            self.head = None
+    @property
+    def right(self):
+        return self.__right
 
-    def get_data(self):
-        s = []
-        h = self.head
-        while h:
-            s.append(h.get_data())
-            h = h.get_next()
-        return s
+    @right.setter
+    def right(self, obj):
+        self.__right = obj
 
-class ObjList:
 
-    def __init__(self, data):
-        self.__data = data
-        self.__next = None
-        self.__prev = None
+class DecisionTree:
+    @classmethod
+    def add_obj(cls, obj, node=None, left=True):
+        if node:
+            if left:
+                node.left = obj
+            else:
+                node.right = obj
+        return obj
 
-    def set_next(self, obj):
-        self.__next = obj
+    @classmethod
+    def predict(cls, root, x):
+        obj = root
+        while obj:
+            obj_next = cls.get_next(obj, x)
+            if not obj_next:
+                break
+            obj = obj_next
+        return obj.value
 
-    def set_prev(self, obj):
-        self.__prev = obj
+    @classmethod
+    def get_next(cls, obj, x):
+        return obj.left if x[obj.indx] == 1 else obj.right
 
-    def get_next(self):
-        return self.__next
+root = DecisionTree.add_obj(TreeObj(0))
+v_11 = DecisionTree.add_obj(TreeObj(1), root)
+v_12 = DecisionTree.add_obj(TreeObj(2), root, False)
+DecisionTree.add_obj(TreeObj(-1, "будет программистом"), v_11)
+DecisionTree.add_obj(TreeObj(-1, "будет кодером"), v_11, False)
+DecisionTree.add_obj(TreeObj(-1, "не все потеряно"), v_12)
+DecisionTree.add_obj(TreeObj(-1, "безнадежен"), v_12, False)
 
-    def get_prev(self):
-        return self.__prev
+x = [1, 1, 0]
+res = DecisionTree.predict(root, x) # будет программистом
 
-    def set_data(self, data):
-        self.__data = data
 
-    def get_data(self):
-        return self.__data
-
-lst = LinkedList()
-lst.add_obj(ObjList("данные 1"))
-lst.add_obj(ObjList("данные 2"))
-lst.add_obj(ObjList("данные 3"))
-res = lst.get_data()
 print(res)
-
-
-
 
 
 
