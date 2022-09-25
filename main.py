@@ -1,63 +1,53 @@
-class TreeObj:
-    def __init__(self, indx, value=None):
-        self.indx = indx
-        self.value = value
-        self.left = self.right = None
+class SuperShop():
+    def __init__(self, name):
+        self.name = name
+        self.goods = []
 
-    @property
-    def left(self):
-        return self.__left
+    def add_product(self, product):
+        self.goods.append(product)
 
-    @left.setter
-    def left(self, obj):
-        self.__left = obj
+    def remove_product(self, product):
+        self.goods.remove(product)
 
-    @property
-    def right(self):
-        return self.__right
+class StringValue():
+    def __init__(self, min_length=2, max_length=50):
+        self.min_length = min_length
+        self.max_length = max_length
 
-    @right.setter
-    def right(self, obj):
-        self.__right = obj
+    def __set_name__(self, owner, name):
+        self.name = "_" + name
 
+    def __get__(self, instance, owner):
+        return getattr(instance, self.name)
 
-class DecisionTree:
-    @classmethod
-    def add_obj(cls, obj, node=None, left=True):
-        if node:
-            if left:
-                node.left = obj
-            else:
-                node.right = obj
-        return obj
+    def __set__(self, instance, value):
+        if type(value) == str and self.min_length <= len(value) <= self.max_length:
+            setattr(instance, self.name, value)
 
-    @classmethod
-    def predict(cls, root, x):
-        obj = root
-        while obj:
-            obj_next = cls.get_next(obj, x)
-            if not obj_next:
-                break
-            obj = obj_next
-        return obj.value
+class PriceValue():
+    def __init__(self, max_value=10000):
+        self.max_value = max_value
 
-    @classmethod
-    def get_next(cls, obj, x):
-        return obj.left if x[obj.indx] == 1 else obj.right
+    def __set_name__(self, owner, name):
+        self.name = "_" + name
 
-root = DecisionTree.add_obj(TreeObj(0))
-v_11 = DecisionTree.add_obj(TreeObj(1), root)
-v_12 = DecisionTree.add_obj(TreeObj(2), root, False)
-DecisionTree.add_obj(TreeObj(-1, "будет программистом"), v_11)
-DecisionTree.add_obj(TreeObj(-1, "будет кодером"), v_11, False)
-DecisionTree.add_obj(TreeObj(-1, "не все потеряно"), v_12)
-DecisionTree.add_obj(TreeObj(-1, "безнадежен"), v_12, False)
+    def __get__(self, instance, owner):
+        return getattr(instance, self.name)
 
-x = [1, 1, 0]
-res = DecisionTree.predict(root, x) # будет программистом
+    def __set__(self, instance, value):
+        if type(value) in (int, float) and 0 <= value <= self.max_value:
+            setattr(instance, self.name, value)
 
+class Product():
+    name = StringValue()
+    price = PriceValue()
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
 
-print(res)
-
-
-
+shop = SuperShop("У Балакирева")
+shop.add_product(Product("Курс по Python", 0))
+shop.add_product(Product("Курс по Python ООП", 2000))
+for p in shop.goods:
+    print(f"{p._name}: {p.price}")
+    print(p.__dict__)
