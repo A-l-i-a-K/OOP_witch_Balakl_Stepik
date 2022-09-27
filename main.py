@@ -1,53 +1,70 @@
-class SuperShop():
-    def __init__(self, name):
-        self.name = name
-        self.goods = []
+import time
 
-    def add_product(self, product):
-        self.goods.append(product)
+class Mechanical:
+    def __init__(self, date):
+        self.date = date
 
-    def remove_product(self, product):
-        self.goods.remove(product)
+    def __setattr__(self, key, value):
+        if key == 'date' and key in self.__dict__:
+            return
+        object.__setattr__(self, key, value)
 
-class StringValue():
-    def __init__(self, min_length=2, max_length=50):
-        self.min_length = min_length
-        self.max_length = max_length
 
-    def __set_name__(self, owner, name):
-        self.name = "_" + name
+class Aragon:
+    def __init__(self, date):
+        self.date = date
 
-    def __get__(self, instance, owner):
-        return getattr(instance, self.name)
+    def __setattr__(self, key, value):
+        if key == 'date' and key in self.__dict__:
+            return
+        object.__setattr__(self, key, value)
 
-    def __set__(self, instance, value):
-        if type(value) == str and self.min_length <= len(value) <= self.max_length:
-            setattr(instance, self.name, value)
+class Calcium:
+    def __init__(self, date):
+        self.date = date
 
-class PriceValue():
-    def __init__(self, max_value=10000):
-        self.max_value = max_value
+    def __setattr__(self, key, value):
+        if key == 'date' and key in self.__dict__:
+            return
+        object.__setattr__(self, key, value)
 
-    def __set_name__(self, owner, name):
-        self.name = "_" + name
+class GeyserClassic:
+    MAX_DATE_FILTER = 100
 
-    def __get__(self, instance, owner):
-        return getattr(instance, self.name)
+    def __init__(self):
+        self.filter_class = ('Mechanical', 'Aragon', 'Calcium')
+        self.filters = {(1, self.filter_class[0]): None, (2, self.filter_class[1]): None, (3, self.filter_class[2]): None}
 
-    def __set__(self, instance, value):
-        if type(value) in (int, float) and 0 <= value <= self.max_value:
-            setattr(instance, self.name, value)
+    def add_filter(self, slot_num, filter):
+        key = (slot_num, filter.__class__.__name__)
+        if key in self.filters and not self.filters[key]:
+            self.filters[key] = filter
 
-class Product():
-    name = StringValue()
-    price = PriceValue()
-    def __init__(self, name, price):
-        self.name = name
-        self.price = price
+    def remove_filter(self, slot_num):
+        if type(slot_num) == int and 1 <= slot_num <= 3:
+            key = (slot_num, self.filter_class[slot_num-1])
+            if key in self.filters:
+                self.filters[key] = None
 
-shop = SuperShop("У Балакирева")
-shop.add_product(Product("Курс по Python", 0))
-shop.add_product(Product("Курс по Python ООП", 2000))
-for p in shop.goods:
-    print(f"{p._name}: {p.price}")
-    print(p.__dict__)
+    def get_filters(self):
+        return tuple(self.filters.values())
+
+    def water_on(self):
+        end = time.time()
+        for f in self.filters.values():
+            if f is None:
+                return False
+            start = f.date
+            if end - start > self.MAX_DATE_FILTER:
+                return False
+        return True
+
+my_water = GeyserClassic()
+my_water.add_filter(1, Mechanical(time.time()))
+my_water.add_filter(2, Aragon(time.time()))
+w = my_water.water_on() # False
+my_water.add_filter(3, Calcium(time.time()))
+w = my_water.water_on() # True
+f1, f2, f3 = my_water.get_filters()  # f1, f2, f3 - ссылки на соответствующие объекты классов фильтров
+my_water.add_filter(3, Calcium(time.time())) # повторное добавление в занятый слот невозможно
+my_water.add_filter(2, Calcium(time.time())) # добавление в "чужой" слот также невозможно
