@@ -1,7 +1,19 @@
 import re
 
-st = input() # HTML
+# pattern = input()
+string = input()
 
-res = re.findall(r'''<a\s[^>]+?href\s?=\s?['"]([^'"]*)['"]''', st)
+CLEANR = re.compile('<.*?>')
 
-print(*res, sep='\n')
+def cleanhtml(raw_html):
+  cleantext = re.sub(CLEANR, '', raw_html)
+  return cleantext
+
+res = cleanhtml(string)
+res  = re.sub(' ','', res)
+
+for el in res:
+    if el != '':
+        for s in el:
+            print(s, end=' ')
+
