@@ -3,10 +3,10 @@ import re
 # pattern = input()
 string = input()
 
-CLEANR = re.compile('<.*?>')
+
 
 def cleanhtml(raw_html):
-  cleantext = re.sub(CLEANR, '', raw_html)
+  cleantext = re.sub(r'<.*?>', '', raw_html)
   return cleantext
 
 res = cleanhtml(string)
