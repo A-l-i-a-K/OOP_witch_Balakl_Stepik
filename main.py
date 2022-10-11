@@ -1,19 +1,13 @@
-import re
+class Morph:
+    def __init__(self, *arg):
+        self.lst = list(arg)
 
-# pattern = input()
-string = input()
+    def add_word(self, word):
+        if word not in self.lst:
+            self.lst.append(word)
 
+    def get_words(self):
+        return tuple(self.lst)
 
-
-def cleanhtml(raw_html):
-  cleantext = re.sub(r'<.*?>', '', raw_html)
-  return cleantext
-
-res = cleanhtml(string)
-res  = re.sub(' ','', res)
-
-for el in res:
-    if el != '':
-        for s in el:
-            print(s, end=' ')
-
+    def __eq__(self, other):
+        return other in self.lst
