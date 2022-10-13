@@ -1,13 +1,15 @@
-class Morph:
-    def __init__(self, *arg):
-        self.lst = list(arg)
+import re
 
-    def add_word(self, word):
-        if word not in self.lst:
-            self.lst.append(word)
+text = input()
+pat = re.compile(r'''(?x)
+(?P<prot>https?)://
+(?P<dom>(?:[a-zA-Z\d_]+\.){1,}[a-z]+)/
+[a-zA-Z\d_/\-&]*    # всё, что между доменом и параметрами
+(?P<params>\?[a-zA-Z=\d_\-&]+)?
+(?P<anc>\#[a-zA-Z_\d\-&]+)?''')
 
-    def get_words(self):
-        return tuple(self.lst)
+urls = re.finditer(pat, text)
 
-    def __eq__(self, other):
-        return other in self.lst
+for u in urls:
+    print(f"""Полная ссылка: {u.group(0)}
+Протокол: {u.group('prot')} | Домен: {u.group('dom')} | Параметры: {u.group('params')} | Якорь: {u.group('anc')}\n""")
